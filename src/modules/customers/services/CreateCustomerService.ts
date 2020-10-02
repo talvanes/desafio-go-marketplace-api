@@ -12,10 +12,26 @@ interface IRequest {
 
 @injectable()
 class CreateCustomerService {
-  constructor(private customersRepository: ICustomersRepository) {}
+  constructor(
+    @inject('CustomerRepository')
+    private customersRepository: ICustomersRepository,
+  ) {}
 
   public async execute({ name, email }: IRequest): Promise<Customer> {
-    // TODO
+    // Check whether given email is already registered
+    const possibleUser = await this.customersRepository.findByEmail(email);
+
+    if (possibleUser) {
+      throw new AppError('Email address already picked up.');
+    }
+
+    // Otherwise, just add another client
+    const newCustomer = await this.customersRepository.create({
+      name,
+      email,
+    });
+
+    return newCustomer;
   }
 }
 
