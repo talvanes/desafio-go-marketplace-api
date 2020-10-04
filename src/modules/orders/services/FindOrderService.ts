@@ -12,8 +12,13 @@ interface IRequest {
 @injectable()
 class FindOrderService {
   constructor(
+    @inject('OrderRepository')
     private ordersRepository: IOrdersRepository,
+
+    @inject('ProductRepository')
     private productsRepository: IProductsRepository,
+
+    @inject('CustomerRepository')
     private customersRepository: ICustomersRepository,
   ) {}
 
