@@ -23,7 +23,10 @@ class FindOrderService {
   ) {}
 
   public async execute({ id }: IRequest): Promise<Order | undefined> {
-    // TODO
+    // Show order info
+    const order = await this.ordersRepository.findById(id);
+
+    return order;
   }
 }
 

@@ -23,7 +23,9 @@ class CreateProductService {
     const existingProduct = await this.productsRepository.findByName(name);
 
     if (existingProduct) {
-      throw new AppError('Such product name exists. Pick another name.');
+      throw new AppError(
+        'There is already a product with such name. Pick another name',
+      );
     }
 
     // Otherwise, add it to the catalog

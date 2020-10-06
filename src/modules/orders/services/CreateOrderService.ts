@@ -31,7 +31,10 @@ class CreateOrderService {
   ) {}
 
   public async execute({ customer_id, products }: IRequest): Promise<Order> {
-    // TODO
+    // Is it an invalid costumer?
+    // Are there any invalid product?
+    // Are there products with insufficient quantities?
+    // Create order (don't forget to subtract quantities)
   }
 }
 
