@@ -8,10 +8,10 @@ import {
 export default class CreateOrdersProductsPivotTable1601667340081
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // Create "orders_customers" pivot table
+    // Create "orders_products" pivot table
     await queryRunner.createTable(
       new Table({
-        name: 'orders_customers',
+        name: 'orders_products',
         columns: [
           {
             name: 'id',
@@ -56,7 +56,7 @@ export default class CreateOrdersProductsPivotTable1601667340081
       }),
     );
 
-    await queryRunner.createForeignKeys('orders_customers', [
+    await queryRunner.createForeignKeys('orders_products', [
       // Create foreign key "OrderProductProduct"
       new TableForeignKey({
         name: 'OrderProductProduct',
@@ -81,12 +81,12 @@ export default class CreateOrdersProductsPivotTable1601667340081
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop foreign key "OrderProductOrder"
-    await queryRunner.dropForeignKey('orders_customers', 'OrderProductOrder');
+    await queryRunner.dropForeignKey('orders_products', 'OrderProductOrder');
 
     // Drop foreign key "OrderProductProduct"
-    await queryRunner.dropForeignKey('orders_customers', 'OrderProductProduct');
+    await queryRunner.dropForeignKey('orders_products', 'OrderProductProduct');
 
-    // Drop "orders_customers" pivot table
-    await queryRunner.dropTable('orders_customers');
+    // Drop "orders_products" pivot table
+    await queryRunner.dropTable('orders_products');
   }
 }

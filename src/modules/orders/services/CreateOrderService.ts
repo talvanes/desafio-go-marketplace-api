@@ -38,8 +38,8 @@ class CreateOrderService {
       throw new AppError('Such costumer does not exist.');
     }
 
-    // Are there any invalid products?
-    // Are there products with insufficient quantities?
+    // TODO Are there any invalid products?
+    // TODO Are there products with insufficient quantities?
 
     // Create order (don't forget to subtract quantities)
     const updatedProducts = await this.productsRepository.updateQuantity(
