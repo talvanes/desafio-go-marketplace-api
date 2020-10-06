@@ -58,11 +58,6 @@ class ProductsRepository implements IProductsRepository {
     // Extract id's
     const product_ids = products.map(product => product.id);
 
-    // Find products inside the catalog
-    const findProducts = await this.ormRepository.find({
-      where: In(product_ids),
-    });
-
     // Intermediate DTO object to grab info from
     const productsDtoData: Record<
       string,
@@ -74,6 +69,11 @@ class ProductsRepository implements IProductsRepository {
         }),
       {},
     );
+
+    // Find products inside the catalog
+    const findProducts = await this.ormRepository.find({
+      where: In(product_ids),
+    });
 
     // Now, update product info
     const foundProductsToUpdate = findProducts.map(product => ({

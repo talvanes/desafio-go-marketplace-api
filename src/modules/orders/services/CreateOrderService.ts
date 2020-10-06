@@ -32,9 +32,32 @@ class CreateOrderService {
 
   public async execute({ customer_id, products }: IRequest): Promise<Order> {
     // Is it an invalid costumer?
-    // Are there any invalid product?
+    const customer = await this.customersRepository.findById(customer_id);
+
+    if (!customer) {
+      throw new AppError('Such costumer does not exist.');
+    }
+
+    // Are there any invalid products?
     // Are there products with insufficient quantities?
+
     // Create order (don't forget to subtract quantities)
+    const updatedProducts = await this.productsRepository.updateQuantity(
+      products,
+    );
+
+    const orderProducts = updatedProducts.map(product => ({
+      product_id: product.id,
+      price: product.price,
+      quantity: product.quantity,
+    }));
+
+    const newOrder = await this.ordersRepository.create({
+      customer,
+      products: orderProducts,
+    });
+
+    return newOrder;
   }
 }
 
