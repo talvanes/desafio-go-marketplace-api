@@ -13,25 +13,25 @@ interface IRequest {
 @injectable()
 class CreateCustomerService {
   constructor(
-    @inject('CustomerRepository')
+    @inject('CustomersRepository')
     private customersRepository: ICustomersRepository,
   ) {}
 
   public async execute({ name, email }: IRequest): Promise<Customer> {
     // Check whether given email is already registered
-    const possibleUser = await this.customersRepository.findByEmail(email);
+    const customerExists = await this.customersRepository.findByEmail(email);
 
-    if (possibleUser) {
-      throw new AppError('Email address already picked up.');
+    if (customerExists) {
+      throw new AppError('This email is already assigned to a customer.');
     }
 
     // Otherwise, just add another client
-    const newCustomer = await this.customersRepository.create({
+    const customer = await this.customersRepository.create({
       name,
       email,
     });
 
-    return newCustomer;
+    return customer;
   }
 }
 
