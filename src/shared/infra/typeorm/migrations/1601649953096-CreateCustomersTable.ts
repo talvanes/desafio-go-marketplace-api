@@ -1,6 +1,6 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
-export default class CreateCustomers1601649953096
+export default class CreateCustomersTable1601649953096
   implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     // Create table "customers"

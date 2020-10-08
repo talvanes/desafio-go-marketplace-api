@@ -1,9 +1,4 @@
-import {
-  MigrationInterface,
-  QueryRunner,
-  Table,
-  TableForeignKey,
-} from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export default class CreateOrdersProductsPivotTable1601667340081
   implements MigrationInterface {
@@ -21,26 +16,14 @@ export default class CreateOrdersProductsPivotTable1601667340081
             default: 'uuid_generate_v4()',
           },
           {
-            name: 'product_id',
-            type: 'uuid',
-            isNullable: true,
-          },
-          {
-            name: 'order_id',
-            type: 'uuid',
-            isNullable: true,
-          },
-          {
             name: 'price',
             type: 'decimal',
             precision: 10,
             scale: 2,
-            default: 0,
           },
           {
             name: 'quantity',
-            type: 'integer',
-            default: 0,
+            type: 'int',
           },
           {
             name: 'created_at',
@@ -55,37 +38,9 @@ export default class CreateOrdersProductsPivotTable1601667340081
         ],
       }),
     );
-
-    await queryRunner.createForeignKeys('orders_products', [
-      // Create foreign key "OrderProductProduct"
-      new TableForeignKey({
-        name: 'OrderProductProduct',
-        columnNames: ['product_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'products',
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
-      }),
-
-      // Create foreign key "OrderProductOrder"
-      new TableForeignKey({
-        name: 'OrderProductOrder',
-        columnNames: ['order_id'],
-        referencedColumnNames: ['id'],
-        referencedTableName: 'orders',
-        onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
-      }),
-    ]);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    // Drop foreign key "OrderProductOrder"
-    await queryRunner.dropForeignKey('orders_products', 'OrderProductOrder');
-
-    // Drop foreign key "OrderProductProduct"
-    await queryRunner.dropForeignKey('orders_products', 'OrderProductProduct');
-
     // Drop "orders_products" pivot table
     await queryRunner.dropTable('orders_products');
   }
