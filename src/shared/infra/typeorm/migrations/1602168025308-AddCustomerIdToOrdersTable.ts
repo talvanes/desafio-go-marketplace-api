@@ -27,7 +27,6 @@ export default class AddCustomerIdToOrdersTable1602168025308
         referencedColumnNames: ['id'],
         referencedTableName: 'customers',
         onDelete: 'SET NULL',
-        onUpdate: 'CASCADE',
       }),
     );
   }
