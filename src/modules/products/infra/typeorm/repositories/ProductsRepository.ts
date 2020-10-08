@@ -21,7 +21,11 @@ class ProductsRepository implements IProductsRepository {
     price,
     quantity,
   }: ICreateProductDTO): Promise<Product> {
-    const product = this.ormRepository.create({ name, price, quantity });
+    const product = this.ormRepository.create({
+      name,
+      price,
+      quantity,
+    });
 
     await this.ormRepository.save(product);
 
@@ -29,59 +33,36 @@ class ProductsRepository implements IProductsRepository {
   }
 
   public async findByName(name: string): Promise<Product | undefined> {
-    const findProduct = await this.ormRepository.findOne({
+    const product = await this.ormRepository.findOne({
       where: {
         name,
       },
     });
 
-    return findProduct;
+    return product;
   }
 
   public async findAllById(products: IFindProducts[]): Promise<Product[]> {
-    // Extract id's
-    const product_ids = products.map(product => product.id);
+    // Extract ID's
+    const productIds = products.map(product => product.id);
 
-    // Do the finding
-    const findProducts = await this.ormRepository.find({
+    // Now, get the items
+    const allProducts = await this.ormRepository.find({
       where: {
-        id: In(product_ids),
+        id: In(productIds),
       },
     });
 
-    return findProducts;
+    return allProducts;
   }
 
   public async updateQuantity(
     products: IUpdateProductsQuantityDTO[],
   ): Promise<Product[]> {
-    // Extract id's
-    const product_ids = products.map(product => product.id);
+    // TODO Check whether product ID's exist, and ONLY update them
 
-    // Intermediate DTO object to grab info from
-    const productsDtoData: Record<
-      string,
-      { quantity: number }
-    > = products.reduce(
-      (dataset, product) =>
-        Object.assign(dataset, {
-          [product.id]: { quantity: product.quantity },
-        }),
-      {},
-    );
-
-    // Find products inside the catalog
-    const findProducts = await this.ormRepository.find({
-      where: In(product_ids),
-    });
-
-    // Now, update product info
-    const foundProductsToUpdate = findProducts.map(product => ({
-      ...product,
-      quantity: product.quantity + productsDtoData[product.id].quantity,
-    }));
-
-    return this.ormRepository.save(foundProductsToUpdate);
+    // Now, do the saving
+    return this.ormRepository.save(products);
   }
 }
 
