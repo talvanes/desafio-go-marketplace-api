@@ -55,20 +55,19 @@ class CreateOrderService {
     );
 
     if (checkUnavailableProducts.length) {
-      // TODO show all the unavailable products
       throw new AppError(
-        `Could not find product ${checkUnavailableProducts[0].id}`,
+        `Could not find products ${checkUnavailableProducts.map(p => p.id)}`,
       );
     }
 
     // Are there products with insufficient quantities?
-    // TODO take it to the next level
-    const findProductsWithInsufficientQuantities = products.filter(
-      product =>
-        availableProducts.filter(
-          availableProduct => availableProduct.id === product.id,
-        )[0].quantity < product.quantity,
-    );
+    const findProductsWithInsufficientQuantities = products.filter(product => {
+      const catalogProduct = availableProducts.find(p => p.id === product.id);
+
+      if (!catalogProduct) return false;
+
+      return catalogProduct.quantity < product.quantity;
+    });
 
     if (findProductsWithInsufficientQuantities.length) {
       throw new AppError(
@@ -77,13 +76,15 @@ class CreateOrderService {
     }
 
     // Serialize product data
-    const serializedProducts = products.map(product => ({
-      product_id: product.id,
-      quantity: product.quantity,
-      price: availableProducts.filter(
-        avaialbleProduct => avaialbleProduct.id === product.id,
-      )[0].price,
-    }));
+    const serializedProducts = products.map(product => {
+      const catalogProduct = availableProducts.find(p => p.id === product.id);
+
+      return {
+        product_id: product.id,
+        quantity: product.quantity,
+        price: catalogProduct ? catalogProduct.price : 0,
+      };
+    });
 
     // Now, create the order
     const order = await this.ordersRepository.create({
@@ -93,13 +94,20 @@ class CreateOrderService {
 
     // And subtract quantities on the products
     const { order_products } = order;
-    const orderedProductsByQuantity = order_products.map(orderProduct => ({
-      id: orderProduct.product_id,
-      quantity:
-        availableProducts.filter(
-          availableProduct => availableProduct.id === orderProduct.product_id,
-        )[0].quantity - orderProduct.quantity,
-    }));
+    const orderedProductsByQuantity = order_products.map(orderProduct => {
+      const catalogProduct = availableProducts.find(
+        p => p.id === orderProduct.product_id,
+      );
+
+      const productQuantity = catalogProduct
+        ? catalogProduct.quantity - orderProduct.quantity
+        : 0;
+
+      return {
+        id: orderProduct.product_id,
+        quantity: productQuantity,
+      };
+    });
 
     await this.productsRepository.updateQuantity(orderedProductsByQuantity);
 
