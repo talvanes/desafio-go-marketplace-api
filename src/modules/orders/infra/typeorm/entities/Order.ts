@@ -17,11 +17,11 @@ class Order {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column('varchar')
-  costumer_id: string;
+  @Column()
+  customer_id: string;
 
   @ManyToOne(() => Customer)
-  @JoinColumn({ name: 'costumer_id' })
+  @JoinColumn({ name: 'customer_id' })
   customer: Customer;
 
   @OneToMany(() => OrdersProducts, orderProduct => orderProduct.order, {
